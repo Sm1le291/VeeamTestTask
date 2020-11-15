@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Polly" Version="7.2.1" />
+    <PackageReference Include="System.Management" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VeeamArchiveTool.Common\VeeamArchiveTool.Common.csproj" />
+    <ProjectReference Include="..\VeeamArchiveTool.DomainModels\VeeamArchiveTool.DomainModels.csproj" />
+    <ProjectReference Include="..\VeeamArchiveTool.Services.Abstractions\VeeamArchiveTool.Services.Abstractions.csproj" />
+  </ItemGroup>
+
+</Project>

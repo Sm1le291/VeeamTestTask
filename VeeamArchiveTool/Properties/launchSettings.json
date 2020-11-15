@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "VeeamArchiveTool": {
+      "commandName": "Project",
+      "commandLineArgs": "decompress C:\\archiveTest\\UntitledGZ.gz C:\\archiveTest\\test22.iso"
+    }
+  }
+}
