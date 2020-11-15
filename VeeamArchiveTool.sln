@@ -17,9 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VeeamArchiveTool.Providers.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VeeamArchiveTool.Providers", "VeeamArchiveTool.Providers\VeeamArchiveTool.Providers.csproj", "{922CB62C-04EB-4B4F-A4A5-5906C6A9FC6B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VeeamArchiveTool.Common.Tests", "VeeamArchiveTool.Common.Tests\VeeamArchiveTool.Common.Tests.csproj", "{00A88B5E-6038-4E89-A1C5-FA819B0FB5D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VeeamArchiveTool.Common.Tests", "VeeamArchiveTool.Common.Tests\VeeamArchiveTool.Common.Tests.csproj", "{00A88B5E-6038-4E89-A1C5-FA819B0FB5D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VeeamArchiveTool.Services.Tests", "VeeamArchiveTool.Services.Tests\VeeamArchiveTool.Services.Tests.csproj", "{BB92EB7C-4833-49A1-9926-EB9DB2026D69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VeeamArchiveTool.Services.Tests", "VeeamArchiveTool.Services.Tests\VeeamArchiveTool.Services.Tests.csproj", "{BB92EB7C-4833-49A1-9926-EB9DB2026D69}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VeeamArchiveTool.Providers.Tests", "VeeamArchiveTool.Providers.Tests\VeeamArchiveTool.Providers.Tests.csproj", "{E9E01C0F-6FB0-4BD4-B775-DE54784DCCCD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{BB92EB7C-4833-49A1-9926-EB9DB2026D69}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB92EB7C-4833-49A1-9926-EB9DB2026D69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB92EB7C-4833-49A1-9926-EB9DB2026D69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9E01C0F-6FB0-4BD4-B775-DE54784DCCCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9E01C0F-6FB0-4BD4-B775-DE54784DCCCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9E01C0F-6FB0-4BD4-B775-DE54784DCCCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9E01C0F-6FB0-4BD4-B775-DE54784DCCCD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
