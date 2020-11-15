@@ -9,6 +9,6 @@ App safely handles next situations:
 -NotEnoughSpace - retry pattern - 30 attempts each 2 seconds, after that app fails
 FileBusyByAnotherProcess - retry pattern -  if we unpack into executable file, sometimes antivirus can busy file until process will be finished, 30 attempts each 2 seconds
 
-App carefully works with RAM and does't take more than 30-40 percent of all available memory.
+App carefully works with RAM and does't take more than 30-40 percent of all available memory(or less).
 
 In project I use type matching for exception handling, because of it needs to be installed latest VS 2019(version 16.8) or .Net  5.0 SDK (5.0.100)
