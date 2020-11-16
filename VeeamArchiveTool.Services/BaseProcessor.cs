@@ -3,9 +3,11 @@ using System.IO;
 
 using Polly;
 using Microsoft.Extensions.Logging;
+using Polly.Retry;
 
 using VeeamArchiveTool.Common.Abstractions;
 using VeeamArchiveTool.Common;
+
 
 namespace VeeamArchiveTool.Services
 {
@@ -49,11 +51,7 @@ namespace VeeamArchiveTool.Services
 
         protected void SafelyCreateEmptyFile(long fileLength, string path)
         {
-            var retryPolicy = Policy
-                .Handle<IOException>()
-                    .WaitAndRetry(ATTEMPTS_NUMBER,
-                    p => TimeSpan.FromSeconds(2)
-                    , (ex, number, context) => _logger.LogCritical($"Next attempt from  {ATTEMPTS_NUMBER} attempts in 2 seconds  {ex.Message}", context.Count));
+            var retryPolicy = GetRetryPolicy();
 
             retryPolicy.Execute(() =>
             {
@@ -66,11 +64,7 @@ namespace VeeamArchiveTool.Services
 
         protected void SafelyCreateFileWithContent(byte[] content, string path)
         {
-            var retryPolicy = Policy
-                .Handle<IOException>()
-                    .WaitAndRetry(ATTEMPTS_NUMBER,
-                    p => TimeSpan.FromSeconds(2)
-                    , (ex, number, context) => _logger.LogCritical($"Next attempt from {ATTEMPTS_NUMBER} attempts in  2 seconds  {ex.Message}", context.Count));
+            var retryPolicy = GetRetryPolicy();
 
             retryPolicy.Execute(() =>
             {
@@ -88,13 +82,7 @@ namespace VeeamArchiveTool.Services
 
         protected void SafelyWriteIntoFile(byte[] content, string path, long startPosition)
         {
-            var retryPolicy = Policy
-                .Handle<IOException>()
-                .WaitAndRetry(
-                ATTEMPTS_NUMBER,
-                p => TimeSpan.FromSeconds(2),
-                (ex, number, context) => _logger.LogCritical($"Next attempt from {ATTEMPTS_NUMBER} attempts in  2 seconds  {ex.Message}", context.Count));
-
+            var retryPolicy = GetRetryPolicy();
 
             retryPolicy.Execute(() =>
             {
@@ -112,13 +100,7 @@ namespace VeeamArchiveTool.Services
 
         protected void SafelyExtendFile(long appendLength, string path)
         {
-            var retryPolicy = Policy
-                .Handle<IOException>()
-                .WaitAndRetry(
-                ATTEMPTS_NUMBER,
-                p => TimeSpan.FromSeconds(2),
-                (ex, number, context) => _logger.LogCritical($"Next attempt from {ATTEMPTS_NUMBER} attempts in  2 seconds  {ex.Message}", context.Count));
-
+            var retryPolicy = GetRetryPolicy();
 
             retryPolicy.Execute(() =>
             {
@@ -127,6 +109,16 @@ namespace VeeamArchiveTool.Services
                     fs.SetLength(fs.Length + appendLength);
                 }
             });
+        }
+
+        private RetryPolicy GetRetryPolicy()
+        {
+            return Policy
+                .Handle<IOException>()
+                .WaitAndRetry(
+                ATTEMPTS_NUMBER,
+                p => TimeSpan.FromSeconds(2),
+                (ex, number, context) => _logger.LogCritical($"Next attempt from {ATTEMPTS_NUMBER} attempts in  2 seconds  {ex.Message}", context.Count));
         }
 
 
