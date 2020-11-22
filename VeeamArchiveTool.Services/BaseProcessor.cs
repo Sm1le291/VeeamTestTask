@@ -41,8 +41,7 @@ namespace VeeamArchiveTool.Services
                 (_executionContext.ChunkSize + _executionContext.ServiceBlockSizeInBytes), true);
             fileStream.Position += 1;
             var beginPosition = fileStream.Position;
-
-            
+                        
             fileStream.BeginWrite(serviceInfo,
                 0,
                 serviceInfo.Length,
@@ -58,14 +57,18 @@ namespace VeeamArchiveTool.Services
         {
             var state = (WriteState)asyncResult.AsyncState;
             state.FileStream.EndWrite(asyncResult);
-
-            
+                        
             state.FileStream.Position += 1;
 
             var startPosition = state.FileStream.Position;
 
-            var asyncResultOfChunk = state.FileStream.BeginWrite(state.Chunk, 0,
-                state.Chunk.Length, new AsyncCallback(EndWriteChunk), new WriteState {
+            var asyncResultOfChunk = state.FileStream.BeginWrite(
+                state.Chunk,
+                0,
+                state.Chunk.Length,
+                new AsyncCallback(EndWriteChunk),
+                new WriteState 
+                {
                     FileStream = state.FileStream
                 });
         }
