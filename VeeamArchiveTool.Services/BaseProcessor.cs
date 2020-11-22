@@ -33,18 +33,17 @@ namespace VeeamArchiveTool.Services
         }
 
         protected void BeginWriteIntoFile(byte[] serviceInfo, byte[] chunk, string outputFilePath)
-        {
-            autoResetEvent.WaitOne();
+        {   
             FileStream fileStream = new FileStream($"{_executionContext.OutputFilePath}",
                 FileMode.Append,
                 FileAccess.Write,
                 FileShare.Write,
-                (_executionContext.ChunkSize + _executionContext.ServiceBlockSizeInBytes) * 4, true);
+                (_executionContext.ChunkSize + _executionContext.ServiceBlockSizeInBytes), true);
 
             fileStream.Position += 1;
-
             var beginPosition = fileStream.Position;
 
+            autoResetEvent.WaitOne();
             fileStream.BeginWrite(serviceInfo,
                 0,
                 serviceInfo.Length,
@@ -78,8 +77,8 @@ namespace VeeamArchiveTool.Services
         {
             var state = (WriteState)asyncResult.AsyncState;
             state.FileStream.EndWrite(asyncResult);
-            state.FileStream.Dispose();
             autoResetEvent.Set();
+            state.FileStream.Dispose();
         }
 
         protected void SafelyCheckThatFileExists(string path)
