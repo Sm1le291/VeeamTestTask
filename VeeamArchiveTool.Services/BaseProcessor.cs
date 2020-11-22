@@ -7,22 +7,79 @@ using Polly.Retry;
 
 using VeeamArchiveTool.Common.Abstractions;
 using VeeamArchiveTool.Common;
-
+using System.Threading;
+using VeeamArchiveTool.DomainModels;
+using System.IO.Compression;
 
 namespace VeeamArchiveTool.Services
 {
     public abstract class BaseProcessor
     {
+        private static AutoResetEvent autoResetEvent = new AutoResetEvent(true);
+        
         private readonly int ATTEMPTS_NUMBER = 30;
 
         private readonly ILogger _logger;
 
+        private readonly IExecutionContext _executionContext;
+
         private readonly IExceptionHandler _exceptionHandler;
 
-        protected BaseProcessor(IExceptionHandler exceptionHandler, ILogger logger)
+        protected BaseProcessor(IExceptionHandler exceptionHandler, ILogger logger, IExecutionContext executionContext)
         {
             _exceptionHandler = exceptionHandler;
             _logger = logger;
+            _executionContext = executionContext;
+        }
+
+        protected void BeginWriteIntoFile(byte[] serviceInfo, byte[] chunk, string outputFilePath)
+        {
+            autoResetEvent.WaitOne();
+            FileStream fileStream = new FileStream($"{_executionContext.OutputFilePath}",
+                FileMode.Append,
+                FileAccess.Write,
+                FileShare.Write,
+                (_executionContext.ChunkSize + _executionContext.ServiceBlockSizeInBytes) * 4, true);
+
+            fileStream.Position += 1;
+
+            var beginPosition = fileStream.Position;
+
+            fileStream.BeginWrite(serviceInfo,
+                0,
+                serviceInfo.Length,
+                new AsyncCallback(EndWriteServiceInfo),
+                new WriteState
+                {
+                    StartPosition = beginPosition,
+                    FileStream = fileStream,
+                    Chunk = chunk
+                });
+        }
+
+        void EndWriteServiceInfo(IAsyncResult asyncResult)
+        {
+            var state = (WriteState)asyncResult.AsyncState;
+            state.FileStream.EndWrite(asyncResult);
+
+            
+            state.FileStream.Position += 1;
+
+            var startPosition = state.FileStream.Position;
+
+            var asyncResultOfChunk = state.FileStream.BeginWrite(state.Chunk, 0,
+                state.Chunk.Length, new AsyncCallback(EndWriteChunk), new WriteState {
+                    StartPosition = startPosition,
+                    FileStream = state.FileStream
+                });
+        }
+
+        void EndWriteChunk(IAsyncResult asyncResult)
+        {
+            var state = (WriteState)asyncResult.AsyncState;
+            state.FileStream.EndWrite(asyncResult);
+            state.FileStream.Dispose();
+            autoResetEvent.Set();
         }
 
         protected void SafelyCheckThatFileExists(string path)

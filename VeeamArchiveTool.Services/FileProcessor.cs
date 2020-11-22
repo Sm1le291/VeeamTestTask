@@ -28,7 +28,7 @@ namespace VeeamArchiveTool.Services
 
         private const int MAX_QUEUE_SIZE = 150;
 
-        public FileProcessor(IExecutionContext executionContext, IThreadPool threadPool, ILogger<FileProcessor> logger, IExceptionHandler exceptionHandler) : base(exceptionHandler, logger)
+        public FileProcessor(IExecutionContext executionContext, IThreadPool threadPool, ILogger<FileProcessor> logger, IExceptionHandler exceptionHandler) : base(exceptionHandler, logger, executionContext)
         {
             _executionContext = executionContext;
             _chunkSize = executionContext.ChunkSize;
@@ -70,6 +70,7 @@ namespace VeeamArchiveTool.Services
                     {
                         Thread.Yield();
                     }
+
                     chunksCollection.Add(new Chunk
                     {
                         ChunkOffsetsInfo = new ChunkOffsetsInfo
@@ -106,12 +107,11 @@ namespace VeeamArchiveTool.Services
 
                     var chunkInfo = GetChunkInformation(serializedChunkInfo);
                     var compressedChunk = new byte[chunkInfo.CompressedLength];
-
                     originalFileStream.Position += 1;
-                    
-                    
+
                     var chunkLength = Convert.ToInt32(chunkInfo.CompressedLength);
                     originalFileStream.Read(compressedChunk, 0, chunkLength);
+                    originalFileStream.Position += 1;
 
                     chunksCollection.Add(new Chunk
                     {
@@ -129,6 +129,7 @@ namespace VeeamArchiveTool.Services
             using (var ms = new MemoryStream(serializedChunksInfo))
             {
                 IFormatter formatter = new BinaryFormatter();
+                
                 return (ChunkOffsetsInfo)formatter.Deserialize(ms);
             }
         }

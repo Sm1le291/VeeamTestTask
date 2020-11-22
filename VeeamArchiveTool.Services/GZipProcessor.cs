@@ -19,9 +19,7 @@ namespace VeeamArchiveTool.Services
 
         private readonly Lazy<IProgressState> _progressState;
 
-        private object _locker = new object();
-
-        public GZipProcessor(IExecutionContext executionContext, Lazy<IProgressState> progressState, IExceptionHandler exceptionHandler, ILogger<GZipProcessor> logger) : base(exceptionHandler, logger)
+        public GZipProcessor(IExecutionContext executionContext, Lazy<IProgressState> progressState, IExceptionHandler exceptionHandler, ILogger<GZipProcessor> logger) : base(exceptionHandler, logger, executionContext)
         {
             _executionContext = executionContext;
             _progressState = progressState;
@@ -52,36 +50,9 @@ namespace VeeamArchiveTool.Services
                 serializedServiceInfo = str.ToArray();
             }
 
-            long currentChunkStartWritePosition = 0;
-
-            long totalIncreaseLength = 0;
-
-            lock (_locker)
-            {
-                currentChunkStartWritePosition = _executionContext.GetCurrentOutputFileSize();
-
-                totalIncreaseLength = chunk.ChunkOffsetsInfo.CompressedLength + serializedServiceInfo.LongLength + 1;
-                _executionContext.IncrementOuputFileSize(totalIncreaseLength);
-
-                SafelyExtendFile(totalIncreaseLength, _executionContext.OutputFilePath);
-            }
-
-            using (var fileStream = new FileStream( $"{_executionContext.OutputFilePath}",
-                FileMode.OpenOrCreate,
-                FileAccess.Write,
-                FileShare.Write,
-                Convert.ToInt32(totalIncreaseLength), true))
-            {
-                fileStream.Position = currentChunkStartWritePosition + 1;
-                fileStream.Write(serializedServiceInfo, 0, serializedServiceInfo.Length);
-
-                fileStream.Position += 1;
-
-                fileStream.Write(compressedChunk, 0, compressedChunk.Length);
-            }
-
+            BeginWriteIntoFile(serializedServiceInfo, compressedChunk, _executionContext.OutputFilePath);
             _progressState.Value.Show(_chunkCounter);
-
+            
             GC.Collect(GC.MaxGeneration);
         }
 

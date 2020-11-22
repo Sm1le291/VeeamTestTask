@@ -20,7 +20,7 @@ namespace VeeamArchiveTool
     {
         static void Main(string[] args)
         {
-            System.AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
+                AppDomain.CurrentDomain.UnhandledException += UnhandledExceptionHandler;
 
                 IHost host = CreateHostBuilder(args).ConfigureAppConfiguration((context, config) =>
                 {

@@ -21,7 +21,7 @@ namespace VeeamArchiveTool.Common
         {
             _logger = logger;
 
-            var concurrencyLevel = Environment.ProcessorCount;
+            var concurrencyLevel = Environment.ProcessorCount*2;
 
             _workers = new Thread[concurrencyLevel];
 
