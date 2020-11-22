@@ -50,10 +50,10 @@ namespace VeeamArchiveTool.Services
                 serializedServiceInfo = str.ToArray();
             }
 
-            BeginWriteIntoFile(serializedServiceInfo, compressedChunk, _executionContext.OutputFilePath);
+            BeginWriteIntoFile(serializedServiceInfo, compressedChunk);
             _progressState.Value.Show(_chunkCounter);
             
-            GC.Collect(GC.MaxGeneration);
+            GC.Collect();
         }
 
         public void UnGZipChunk(Chunk chunk)

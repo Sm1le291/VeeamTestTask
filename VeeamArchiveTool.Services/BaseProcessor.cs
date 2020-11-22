@@ -32,7 +32,7 @@ namespace VeeamArchiveTool.Services
             _executionContext = executionContext;
         }
 
-        protected void BeginWriteIntoFile(byte[] serviceInfo, byte[] chunk, string outputFilePath)
+        protected void BeginWriteIntoFile(byte[] serviceInfo, byte[] chunk)
         {
             autoResetEvent.WaitOne();
             FileStream fileStream = new FileStream($"{_executionContext.OutputFilePath}",
@@ -50,7 +50,6 @@ namespace VeeamArchiveTool.Services
                 new AsyncCallback(EndWriteServiceInfo),
                 new WriteState
                 {
-                    StartPosition = beginPosition,
                     FileStream = fileStream,
                     Chunk = chunk
                 });
@@ -68,7 +67,6 @@ namespace VeeamArchiveTool.Services
 
             var asyncResultOfChunk = state.FileStream.BeginWrite(state.Chunk, 0,
                 state.Chunk.Length, new AsyncCallback(EndWriteChunk), new WriteState {
-                    StartPosition = startPosition,
                     FileStream = state.FileStream
                 });
         }

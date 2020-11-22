@@ -11,8 +11,6 @@ namespace VeeamArchiveTool.DomainModels
     {
         public FileStream FileStream { get; set; }
 
-        public long StartPosition { get; set; }
-
         public byte[] Chunk { get; set; }
     }
 }
