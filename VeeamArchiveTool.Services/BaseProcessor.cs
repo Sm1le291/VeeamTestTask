@@ -9,7 +9,6 @@ using VeeamArchiveTool.Common.Abstractions;
 using VeeamArchiveTool.Common;
 using System.Threading;
 using VeeamArchiveTool.DomainModels;
-using System.IO.Compression;
 
 namespace VeeamArchiveTool.Services
 {
