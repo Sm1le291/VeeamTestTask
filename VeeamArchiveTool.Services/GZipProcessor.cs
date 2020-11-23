@@ -77,6 +77,7 @@ namespace VeeamArchiveTool.Services
             SafelyWriteIntoFile(uncompressedChunkContent, _executionContext.OutputFilePath, chunk.ChunkOffsetsInfo.OriginalBeginPosition);
 
             _progressState.Value.Show(_chunkCounter);
+            GC.Collect();
         }
     }
 }
